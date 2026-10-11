@@ -30,9 +30,11 @@ Ba ảnh trong `data/input/` là ảnh public domain lấy từ Wikimedia Common
 
 ## Cài đặt
 
-Cần Python 3.9 trở lên. Nên dùng môi trường ảo.
+Cần Python 3.12 (3.13 lỗi khi cài `basicsr`). Chạy từ thư mục `photo_restoration/`:
 
 ```bash
+python3.12 -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -48,7 +50,13 @@ Chạy từ thư mục `photo_restoration/` (không chạy từ trong `src/`), v
 python src/restore_photo.py data/input/bride.jpg data/output/bride_restored.jpg
 ```
 
-Lần chạy đầu sẽ tải model nên lâu hơn. Trên CPU mỗi ảnh mất khoảng 1 đến 2 phút.
+Muốn phục chế ảnh của bạn, thay hai đường dẫn (ảnh vào, ảnh ra):
+
+```bash
+python src/restore_photo.py duong/dan/anh_cu.jpg data/output/anh_moi.jpg
+```
+
+Ảnh ra có kích thước gấp đôi ảnh vào. Lần chạy đầu sẽ tải model nên lâu hơn. Trên CPU mỗi ảnh mất khoảng 1 đến 2 phút.
 
 ## Kết quả thử
 

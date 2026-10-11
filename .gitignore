@@ -1,0 +1,4 @@
+# model dò mặt tự tải khi chạy
+gfpgan/
+__pycache__/
+.DS_Store

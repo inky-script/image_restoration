@@ -47,18 +47,17 @@ python -m venv .venv
 Windows: `.venv\Scripts\activate` · macOS/Linux: `source .venv/bin/activate`
 
 ```bash
-pip install torch torchvision
-```
-
-```bash
-pip install basicsr --no-build-isolation
-```
-
-```bash
 pip install -r requirements.txt
 ```
 
-Cài torch trước rồi cài `basicsr` với `--no-build-isolation` để pip không tải thêm một bản PyTorch khác khi build (rất lâu). Máy có GPU NVIDIA thì lấy lệnh cài torch bản CUDA tại pytorch.org.
+`requirements.txt` cài PyTorch bản CPU và cài `basicsr` từ wheel có sẵn trong `wheels/` (bản trên PyPI phải build và tải thêm cả PyTorch, rất lâu). Máy có GPU NVIDIA thì cài trước torch bản CUDA theo hướng dẫn tại pytorch.org.
+
+## Triển khai lên Streamlit Community Cloud
+
+- Main file: `src/app.py`, nhánh `main`.
+- Advanced settings → Python 3.10 hoặc 3.11.
+- `packages.txt` cài thêm thư viện hệ thống Linux mà OpenCV cần.
+- Lần chạy đầu trên cloud sẽ tải khoảng 600 MB model. Máy chủ miễn phí chỉ có CPU và RAM hạn chế, nên mỗi ảnh có thể mất vài phút; nếu app bị khởi động lại khi phục chế, hãy chọn ảnh nhỏ hoặc giảm kích thước ô (tile).
 
 Không cần tải model thủ công: lần chạy đầu tự tải khoảng 600 MB (cần Internet). Nếu tải bị ngắt giữa chừng (lỗi `unexpected EOF`), xóa file `.pth` dở dang rồi chạy lại.
 

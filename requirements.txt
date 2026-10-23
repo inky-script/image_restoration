@@ -1,9 +1,13 @@
-opencv-python
+# PyTorch bản CPU (nhẹ hơn nhiều so với bản CUDA mặc định trên Linux)
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch
 torchvision
-basicsr
+# basicsr chỉ có bản mã nguồn trên PyPI, khi build lại tải thêm cả PyTorch.
+# Dùng sẵn wheel thuần Python (đã build từ basicsr 1.4.2) để cài nhanh trên mọi máy.
+./wheels/basicsr-1.4.2-py3-none-any.whl
 gfpgan
 realesrgan
+opencv-python
 streamlit>=1.50
 scikit-image
 pandas

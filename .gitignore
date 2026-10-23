@@ -1,5 +1,15 @@
-# model dò mặt tự tải khi chạy
-gfpgan/
-__pycache__/
-.DS_Store
+# môi trường ảo
+.venv/
 venv/
+# model tự tải khi chạy (khoảng 600 MB)
+gfpgan/
+weights/
+*.pth
+__pycache__/
+*.pyc
+.DS_Store
+# log chạy đánh giá
+results/eval_log.txt
+results/eval_err.txt
+# file tạm của Word
+~$*.docx

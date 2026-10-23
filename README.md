@@ -1,63 +1,94 @@
-# Phục chế ảnh cũ tự động
+# Phục chế ảnh cũ tự động bằng học sâu
 
-Chương trình Python nhận một ảnh cũ và trả ra ảnh rõ hơn: làm rõ khuôn mặt bằng **GFPGAN** và phóng to nền ×2 bằng **Real-ESRGAN**. Không xóa vết xước, không tô màu (xem `docs/proposal.md`, mục Hạn chế).
+Đồ án môn Xử lý ảnh số, Trường Đại học Công Thương TP. Hồ Chí Minh. GVHD: ThS. Đỗ Trung Dũng.
+
+Ứng dụng web nhận ảnh cũ, tiền xử lý bằng OpenCV, làm rõ khuôn mặt bằng **GFPGAN**, phóng to ×2/×4 và làm nét nền bằng **Real-ESRGAN**, rồi đánh giá chất lượng bằng **PSNR / SSIM**. Không xóa vết xước, không tô màu.
+
+## Phân công
+
+| Thành viên | Vai trò | Mã nguồn |
+|---|---|---|
+| Nguyễn Thu Thảo (nhóm trưởng) | Dữ liệu & tiền xử lý | `src/build_test_set.py`, `src/preprocessing.py`, `test_images/` |
+| Nguyễn Phan Nhật Huy | Lõi thuật toán & mô hình AI | `src/model_core.py` |
+| Nguyễn Thị Kiều Trang | Giao diện & ứng dụng | `src/app.py` |
+| Đỗ Thị Hồng Quyên | Kiểm thử, đánh giá & báo cáo | `src/evaluate.py`, `docs/` |
 
 ## Cấu trúc thư mục
 
 ```
-photo_restoration/
-├── README.md              Hướng dẫn này
-├── requirements.txt       Danh sách thư viện Python cần cài
-├── .gitignore             Loại gfpgan/ khỏi git
 ├── src/
-│   └── restore_photo.py   Chương trình chính (đọc ảnh, phục chế, ghi ảnh)
-├── docs/
-│   ├── proposal.md        Đề xuất đồ án (bản nguồn)
-│   ├── proposal.pdf       Đề xuất đồ án (bản PDF, sinh từ proposal.md)
-│   └── test_report.md     Báo cáo kết quả chạy thử
+│   ├── build_test_set.py    (TV1) tạo test_images/ từ data/raw_archive/
+│   ├── preprocessing.py     (TV1) chuẩn hóa màu, cân bằng sáng (gamma/CLAHE), resize + padding
+│   ├── model_core.py        (TV2) GFPGAN + Real-ESRGAN, quản lý bộ nhớ, xử lý lỗi
+│   ├── app.py               (TV3) giao diện Streamlit
+│   ├── evaluate.py          (TV4) PSNR / SSIM trên tập test
+│   └── restore_photo.py     giữ lại cho lệnh cũ, gọi sang model_core.py
 ├── data/
-│   ├── input/             Ảnh cũ dùng để thử
-│   │   ├── bride.jpg      Ảnh cô dâu, Tati Photo Studios (khoảng 1964)
-│   │   ├── travers.jpg    Ảnh P.L. Travers as Titania
-│   │   └── poe.jpg        Ảnh Edgar Allan Poe (khoảng 1849), bản đã phục chế sẵn
-│   └── output/            Kết quả chương trình
-│       ├── *_restored.jpg Ảnh sau phục chế (kích thước gấp đôi ảnh gốc)
-│       └── *_compare.jpg  Ảnh so sánh cận mặt: trái = gốc phóng ×2, phải = kết quả
-└── gfpgan/                (tự sinh khi chạy, không nộp) model dò mặt tải về, khoảng 200 MB
+│   ├── raw_archive/         archive.zip đã giải nén: 146 ảnh sạch, 54 ảnh hỏng, file phân loại CSV
+│   ├── input/, output/      3 ảnh Wikimedia Commons và kết quả của giai đoạn đầu
+├── test_images/             bộ dữ liệu chuẩn dùng chung
+│   ├── real_damaged/        54 ảnh hỏng thật
+│   ├── gt/                  40 ảnh gốc (cạnh dài 512 px)
+│   ├── degraded/            40 ảnh gốc bị làm hỏng nhân tạo (mờ + thu nhỏ ×2 + nhiễu + JPEG)
+│   └── manifest.csv
+├── results/                 kết quả evaluate.py: metrics.csv, summary.csv, real_times.csv, ảnh
+├── docs/                    báo cáo Word, hình vẽ (docs/figures/), đề xuất, báo cáo thử nghiệm cũ
+└── .streamlit/config.toml   theme của giao diện
 ```
-
-Ba ảnh trong `data/input/` là ảnh public domain lấy từ Wikimedia Commons, đã thu nhỏ còn khoảng 1280px.
 
 ## Cài đặt
 
-Cần Python 3.12 (3.13 lỗi khi cài `basicsr`). Chạy từ thư mục `photo_restoration/`:
+Cần Python 3.10 hoặc 3.12 (3.13 lỗi khi cài `basicsr`). Chạy từ thư mục gốc của repo:
 
 ```bash
-python3.12 -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+python -m venv .venv
+```
+
+Windows: `.venv\Scripts\activate` · macOS/Linux: `source .venv/bin/activate`
+
+```bash
+pip install torch torchvision
+```
+
+```bash
+pip install basicsr --no-build-isolation
+```
+
+```bash
 pip install -r requirements.txt
 ```
 
-Không cần tải model thủ công: lần chạy đầu chương trình tự tải khoảng 600 MB (cần Internet). Model lưu trong thư mục của thư viện (`site-packages`) và trong `gfpgan/weights/`, các lần sau dùng lại. Nếu quá trình tải bị ngắt giữa chừng, xóa file dở dang rồi chạy lại (lỗi thường là `unexpected EOF`).
+Cài torch trước rồi cài `basicsr` với `--no-build-isolation` để pip không tải thêm một bản PyTorch khác khi build (rất lâu). Máy có GPU NVIDIA thì lấy lệnh cài torch bản CUDA tại pytorch.org.
 
-**Lưu ý phiên bản Python:** dùng Python 3.12 (đã chạy thử). Trên Python 3.13, `pip install basicsr` lỗi `KeyError: '__version__'` khi build.
+Không cần tải model thủ công: lần chạy đầu tự tải khoảng 600 MB (cần Internet). Nếu tải bị ngắt giữa chừng (lỗi `unexpected EOF`), xóa file `.pth` dở dang rồi chạy lại.
 
 ## Cách chạy
 
-Chạy từ thư mục `photo_restoration/` (không chạy từ trong `src/`), vì model dò mặt được lưu vào `gfpgan/` theo thư mục hiện tại.
+Giao diện web (mở http://localhost:8501):
 
 ```bash
-python src/restore_photo.py data/input/bride.jpg data/output/bride_restored.jpg
+streamlit run src/app.py
 ```
 
-Muốn phục chế ảnh của bạn, thay hai đường dẫn (ảnh vào, ảnh ra):
+Phục chế một ảnh bằng dòng lệnh (`--scale 4` để phóng ×4, `--face none` để bỏ bước làm rõ mặt, `--balance clahe|gamma|none` để chọn cách cân bằng sáng):
 
 ```bash
-python src/restore_photo.py duong/dan/anh_cu.jpg data/output/anh_moi.jpg
+python src/model_core.py data/input/bride.jpg results/bride_restored.png
 ```
 
-Ảnh ra có kích thước gấp đôi ảnh vào. Lần chạy đầu sẽ tải model nên lâu hơn. Trên CPU mỗi ảnh mất khoảng 1 đến 2 phút.
+Tạo lại bộ dữ liệu `test_images/` từ `data/raw_archive/`:
 
-## Kết quả thử
+```bash
+python src/build_test_set.py
+```
 
-Xem `docs/test_report.md` (thời gian chạy, nhận xét) và các ảnh `*_compare.jpg` trong `data/output/`.
+Tính PSNR / SSIM (thêm `--limit 5` để chạy thử nhanh). Trên CPU toàn bộ mất khoảng 30 đến 60 phút:
+
+```bash
+python src/evaluate.py
+```
+
+## Nguồn dữ liệu
+
+- `data/raw_archive/`: bộ ảnh độ phân giải thấp từ Kaggle (archive.zip), 200 ảnh kèm `image_classification_results.csv`.
+- `data/input/`: 3 ảnh public domain từ Wikimedia Commons, đã thu nhỏ còn khoảng 1280 px.

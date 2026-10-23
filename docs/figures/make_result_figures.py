@@ -33,7 +33,8 @@ for ax, key, title, fmt in [(axes[0], "psnr", "PSNR (dB), cao hơn là tốt hơ
                             (axes[1], "ssim", "SSIM, cao hơn là tốt hơn", "{:.3f}"),
                             (axes[2], "lpips", "LPIPS, thấp hơn là tốt hơn", "{:.3f}")]:
     vals, errs = summary[f"{key}_mean"], summary[f"{key}_std"]
-    bars = ax.bar(summary["label"], vals, yerr=errs, color=COLORS, capsize=4, error_kw={"lw": 1})
+    labels = [s.replace(" + ", " +\n").replace(" truyền", "\ntruyền") for s in summary["label"]]
+    bars = ax.bar(labels, vals, yerr=errs, color=COLORS, capsize=4, error_kw={"lw": 1})
     if key == "lpips":
         ax.set_ylim(0, (vals + errs).max() * 1.1)
     else:
@@ -83,11 +84,10 @@ fig.savefig(OUT / "pairs_examples.png", dpi=170)
 plt.close(fig)
 
 # ---- Ví dụ ảnh hỏng thật ----
-cand = real[real["faces"] > 0]
-if len(cand) < 6:
-    cand = real
-step = max(1, len(cand) // 6)
-ids = list(cand["id"].iloc[::step][:6])
+# Chọn có chủ đích, từ trường hợp tốt đến trường hợp mô hình "bịa" khuôn mặt:
+# 009, 017 rõ hơn; 001 vết xước còn nguyên; 045 nhòe chuyển động; 037 mờ nặng, 028 vỡ điểm ảnh
+ids = [i for i in ["real_009", "real_017", "real_001", "real_045", "real_037", "real_028"]
+       if (RES / "real" / f"{i}.png").exists()]
 fig, axes = plt.subplots(2, len(ids), figsize=(2.3 * len(ids), 5.2))
 for c, rid in enumerate(ids):
     after = rgb(RES / "real" / f"{rid}.png")

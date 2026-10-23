@@ -1,0 +1,55 @@
+id,in_w,in_h,faces,seconds,lap_bicubic,lap_restored,preprocess
+real_001,548,768,1,49.6,28.8,121.0,"Chuẩn hóa màu: BGR 3 kênh; gamma=0.57 (độ sáng TB 0.29); Thu nhỏ 731×1024 → 548×768; Padding dưới 0px, phải 4px (bội số 8)"
+real_002,520,768,1,45.91,18.2,96.6,Chuẩn hóa màu: BGR 3 kênh; CLAHE clip=2.0 (tương phản 0.18); Thu nhỏ 694×1024 → 520×768
+real_003,271,186,2,23.27,186.6,575.6,"Chuẩn hóa màu: BGR 3 kênh; gamma=2.00 (độ sáng TB 0.73); Padding dưới 6px, phải 1px (bội số 8)"
+real_004,768,530,9,124.91,66.5,497.3,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 1024×707 → 768×530; Padding dưới 6px, phải 0px (bội số 8)"
+real_005,768,567,2,72.69,24.8,143.9,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 1024×756 → 768×567; Padding dưới 1px, phải 0px (bội số 8)"
+real_006,310,163,1,21.48,280.6,374.4,"Chuẩn hóa màu: BGR 3 kênh; CLAHE clip=2.0 (tương phản 0.17); Padding dưới 5px, phải 2px (bội số 8)"
+real_007,768,432,1,55.47,48.9,82.3,Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 1024×576 → 768×432
+real_008,216,233,1,17.92,507.4,1575.2,"Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); CLAHE clip=2.0 (tương phản 0.15); Padding dưới 7px, phải 0px (bội số 8)"
+real_009,236,419,1,22.46,165.5,707.2,"Chuẩn hóa màu: BGR 3 kênh; CLAHE clip=2.0 (tương phản 0.15); Padding dưới 5px, phải 4px (bội số 8)"
+real_010,680,443,2,65.49,82.6,271.9,"Chuẩn hóa màu: BGR 3 kênh; CLAHE clip=2.0 (tương phản 0.15); Padding dưới 5px, phải 0px (bội số 8)"
+real_011,512,284,2,36.31,708.3,1330.6,"Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); CLAHE clip=2.0 (tương phản 0.17); Padding dưới 4px, phải 0px (bội số 8)"
+real_012,294,444,1,24.49,117.5,566.4,"Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); Cân bằng sáng: không cần chỉnh; Padding dưới 4px, phải 2px (bội số 8)"
+real_013,478,768,3,73.68,47.9,310.2,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 638×1024 → 478×768; Padding dưới 0px, phải 2px (bội số 8)"
+real_014,519,768,2,77.1,83.6,423.6,"Chuẩn hóa màu: BGR 3 kênh; CLAHE clip=2.0 (tương phản 0.15); Thu nhỏ 692×1024 → 519×768; Padding dưới 0px, phải 1px (bội số 8)"
+real_015,400,600,1,39.18,163.9,380.6,Chuẩn hóa màu: BGR 3 kênh; CLAHE clip=2.0 (tương phản 0.17)
+real_016,768,682,12,184.88,18.4,176.5,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 800×710 → 768×682; Padding dưới 6px, phải 0px (bội số 8)"
+real_017,768,768,2,86.32,24.9,120.0,Chuẩn hóa màu: BGR 3 kênh; gamma=0.52 (độ sáng TB 0.26); Thu nhỏ 786×786 → 768×768
+real_018,586,768,1,68.53,16.2,83.5,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 750×983 → 586×768; Padding dưới 0px, phải 6px (bội số 8)"
+real_019,768,768,1,91.35,5.7,65.1,Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 1024×1024 → 768×768
+real_020,259,195,1,25.27,29.8,173.5,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 5px, phải 5px (bội số 8)"
+real_021,144,184,0,5.65,96.5,326.4,Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); Cân bằng sáng: không cần chỉnh
+real_022,500,643,0,44.86,4.7,41.6,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 5px, phải 4px (bội số 8)"
+real_023,225,225,1,15.55,31.3,125.1,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 7px, phải 7px (bội số 8)"
+real_024,658,256,2,36.1,40.4,88.8,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 0px, phải 6px (bội số 8)"
+real_025,197,256,1,14.6,21.8,158.1,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 0px, phải 3px (bội số 8)"
+real_026,500,768,1,50.51,437.3,58.8,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 666×1024 → 500×768; Padding dưới 0px, phải 4px (bội số 8)"
+real_027,580,768,0,53.26,256.3,2109.5,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 774×1024 → 580×768; Padding dưới 0px, phải 4px (bội số 8)"
+real_028,193,261,1,19.11,1178.2,1206.3,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 3px, phải 7px (bội số 8)"
+real_029,193,260,1,16.63,1675.3,313.7,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 4px, phải 7px (bội số 8)"
+real_030,180,279,1,13.36,915.9,942.8,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 1px, phải 4px (bội số 8)"
+real_031,194,260,1,14.01,1854.5,625.4,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 4px, phải 6px (bội số 8)"
+real_032,275,183,1,13.05,36.1,221.6,"Chuẩn hóa màu: BGR 3 kênh; CLAHE clip=2.0 (tương phản 0.13); Padding dưới 1px, phải 5px (bội số 8)"
+real_033,256,256,1,15.18,81.9,69.7,Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh
+real_034,225,225,1,14.01,59.0,194.2,"Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); Cân bằng sáng: không cần chỉnh; Padding dưới 7px, phải 7px (bội số 8)"
+real_035,265,190,0,4.88,234.4,642.9,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 2px, phải 7px (bội số 8)"
+real_036,768,376,1,35.04,13.9,55.5,Chuẩn hóa màu: BGR 3 kênh; gamma=2.00 (độ sáng TB 0.79); Thu nhỏ 1024×502 → 768×376
+real_037,292,282,1,15.88,28.8,159.7,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 6px, phải 4px (bội số 8)"
+real_038,700,700,1,58.14,3.7,17.2,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 4px, phải 4px (bội số 8)"
+real_039,604,768,1,56.38,1.3,7.6,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 805×1024 → 604×768; Padding dưới 0px, phải 4px (bội số 8)"
+real_040,604,768,1,52.16,1.0,7.8,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 805×1024 → 604×768; Padding dưới 0px, phải 4px (bội số 8)"
+real_041,603,768,1,51.48,1.0,7.1,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Thu nhỏ 804×1024 → 603×768; Padding dưới 0px, phải 5px (bội số 8)"
+real_042,612,344,1,28.61,7.0,46.9,"Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); CLAHE clip=2.0 (tương phản 0.18); Padding dưới 0px, phải 4px (bội số 8)"
+real_043,646,768,1,61.26,1.0,15.9,"Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); gamma=0.50 (độ sáng TB 0.22); Thu nhỏ 862×1024 → 646×768; Padding dưới 0px, phải 2px (bội số 8)"
+real_044,256,400,1,17.6,4.8,43.3,Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); CLAHE clip=2.0 (tương phản 0.17)
+real_045,194,259,1,13.34,15.6,32.9,"Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); Cân bằng sáng: không cần chỉnh; Padding dưới 5px, phải 6px (bội số 8)"
+real_046,664,768,1,55.1,1.2,29.9,Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); Cân bằng sáng: không cần chỉnh; Thu nhỏ 689×797 → 664×768
+real_047,225,225,1,13.36,24.6,229.0,"Chuẩn hóa màu: BGR 3 kênh; CLAHE clip=2.0 (tương phản 0.14); Padding dưới 7px, phải 7px (bội số 8)"
+real_048,251,201,1,13.05,71.8,437.2,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 7px, phải 5px (bội số 8)"
+real_049,213,280,1,14.97,2.5,131.4,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 0px, phải 3px (bội số 8)"
+real_050,223,226,1,12.83,10.9,129.7,"Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); gamma=0.50 (độ sáng TB 0.21); CLAHE clip=2.0 (tương phản 0.12); Padding dưới 6px, phải 1px (bội số 8)"
+real_051,229,220,1,12.56,13.4,107.4,"Chuẩn hóa màu: BGR 3 kênh; gamma=0.50 (độ sáng TB 0.23); CLAHE clip=2.0 (tương phản 0.13); Padding dưới 4px, phải 3px (bội số 8)"
+real_052,680,450,1,37.34,72.6,425.0,"Chuẩn hóa màu: BGR 3 kênh; Cân bằng sáng: không cần chỉnh; Padding dưới 6px, phải 0px (bội số 8)"
+real_053,275,183,1,12.73,536.9,3374.5,"Chuẩn hóa màu: BGR 3 kênh (ảnh đen trắng); CLAHE clip=2.0 (tương phản 0.16); Padding dưới 1px, phải 5px (bội số 8)"
+real_054,768,586,2,59.17,31.8,157.4,"Chuẩn hóa màu: BGR 3 kênh; gamma=2.00 (độ sáng TB 0.77); Thu nhỏ 1024×782 → 768×586; Padding dưới 6px, phải 0px (bội số 8)"

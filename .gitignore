@@ -2,8 +2,8 @@
 .venv/
 venv/
 # model tự tải khi chạy (khoảng 600 MB)
-gfpgan/
-weights/
+/gfpgan/
+/weights/
 *.pth
 __pycache__/
 *.pyc

@@ -1,0 +1,5 @@
+method,label,n,psnr_mean,psnr_std,ssim_mean,ssim_std,seconds_mean,lpips_mean,lpips_std
+bicubic,Bicubic,40,31.08,2.89,0.8379,0.0665,0.0,0.3225,0.0761
+opencv,OpenCV truyền thống,40,30.47,2.67,0.8189,0.08,0.24,0.3488,0.0885
+realesrgan,Real-ESRGAN,40,29.8,2.83,0.832,0.0758,5.51,0.1724,0.0537
+gfpgan,GFPGAN + Real-ESRGAN,40,29.49,2.46,0.8272,0.0728,16.39,0.1798,0.0541

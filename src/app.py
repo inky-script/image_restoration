@@ -42,7 +42,7 @@ SUPERVISOR = "ThS. Đỗ Trung Dũng"
 TEAM = [
     ("Nguyễn Thu Thảo (nhóm trưởng)", "2045240281", "Dữ liệu & tiền xử lý",
      "Thu thập, chuẩn hóa test set; tiền xử lý OpenCV; đóng gói test_images/"),
-    ("Nguyễn Phan Nhật Huy", "...............", "Lõi thuật toán & mô hình AI",
+    ("Nguyễn Phan Nhật Huy", "2045240107", "Lõi thuật toán & mô hình AI",
      "Cấu hình GFPGAN + Real-ESRGAN; model_core.py; xử lý lỗi VRAM/RAM"),
     ("Nguyễn Thị Kiều Trang", "2045240312", "Giao diện & ứng dụng",
      "App Streamlit: upload, xử lý, so sánh trước/sau, tải ảnh; nhúng lõi AI"),
@@ -264,7 +264,7 @@ pre_cfg = PreprocessConfig(balance=BALANCE[balance_label], max_side=int(max_side
 st.markdown(
     f"""<div class="hero"><h1>{PROJECT_TITLE}</h1>
     <p>Tiền xử lý OpenCV → GFPGAN khôi phục khuôn mặt → Real-ESRGAN phóng to, làm nét nền
-    → đánh giá PSNR/SSIM</p></div>""",
+    → đánh giá PSNR / SSIM / LPIPS</p></div>""",
     unsafe_allow_html=True,
 )
 tab_restore, tab_pre, tab_eval, tab_data, tab_team = st.tabs(
@@ -427,24 +427,33 @@ with tab_pre:
 with tab_eval:
     st.markdown(
         "Ảnh gốc sạch được **làm hỏng nhân tạo** (mờ Gauss + thu nhỏ x2 + nhiễu + nén JPEG), rồi phục chế "
-        "về lại kích thước gốc bằng 4 phương pháp. **PSNR** và **SSIM** đo trên kênh Y, càng cao càng giống ảnh gốc."
+        "về lại kích thước gốc bằng 4 phương pháp. **PSNR**, **SSIM** (kênh Y, càng cao càng tốt) và **LPIPS** "
+        "(khoảng cách cảm nhận, càng thấp càng tốt) đo độ giống với ảnh gốc."
     )
     summary, metrics = load_csv("summary.csv"), load_csv("metrics.csv")
     if summary is None:
         st.info("Chưa có kết quả đánh giá. Bấm nút bên dưới hoặc chạy `python src/evaluate.py`.")
     else:
-        best = summary.loc[summary["psnr_mean"].idxmax()]
-        st.success(f"Trên {int(summary['n'].iloc[0])} cặp ảnh, phương pháp có PSNR cao nhất: "
-                   f"**{best['label']}** ({best['psnr_mean']:.2f} dB, SSIM {best['ssim_mean']:.4f}).")
+        best_p = summary.loc[summary["psnr_mean"].idxmax()]
+        msg = (f"Trên {int(summary['n'].iloc[0])} cặp ảnh: PSNR cao nhất là **{best_p['label']}** "
+               f"({best_p['psnr_mean']:.2f} dB)")
+        if "lpips_mean" in summary:
+            best_l = summary.loc[summary["lpips_mean"].idxmin()]
+            msg += f"; LPIPS thấp nhất (giống ảnh gốc nhất theo cảm nhận) là **{best_l['label']}** ({best_l['lpips_mean']:.3f})"
+        st.success(msg + ".")
+        st.caption("PSNR/SSIM đo độ trùng khớp từng điểm ảnh nên thường ưu ái ảnh mờ như Bicubic; LPIPS đo độ giống "
+                   "theo cảm nhận của người xem. Cần đọc cả ba chỉ số cùng với ảnh minh họa.")
         show = summary.rename(columns={"label": "Phương pháp", "n": "Số ảnh", "psnr_mean": "PSNR TB (dB)",
                                        "psnr_std": "± PSNR", "ssim_mean": "SSIM TB", "ssim_std": "± SSIM",
+                                       "lpips_mean": "LPIPS TB ↓", "lpips_std": "± LPIPS",
                                        "seconds_mean": "Giây/ảnh"}).drop(columns="method")
         st.dataframe(show, width="stretch", hide_index=True)
-        c1, c2 = st.columns(2)
-        c1.markdown("**PSNR trung bình (dB)**")
-        c1.bar_chart(summary.set_index("label")["psnr_mean"], height=260, color="#c08a4a")
-        c2.markdown("**SSIM trung bình**")
-        c2.bar_chart(summary.set_index("label")["ssim_mean"], height=260, color="#7a5230")
+        charts = [("psnr_mean", "PSNR trung bình (dB) ↑", "#c08a4a"), ("ssim_mean", "SSIM trung bình ↑", "#7a5230")]
+        if "lpips_mean" in summary:
+            charts.append(("lpips_mean", "LPIPS trung bình ↓", "#5b7fa6"))
+        for c, (key, title, color) in zip(st.columns(len(charts)), charts):
+            c.markdown(f"**{title}**")
+            c.bar_chart(summary.set_index("label")[key], height=220, color=color, horizontal=True, sort=False)
 
         if metrics is not None:
             st.markdown("#### Chi tiết từng ảnh")
@@ -460,8 +469,9 @@ with tab_eval:
             for c, m in zip(cols[2:], [m for m in ev.METHODS if m in row.index]):
                 p = RESULTS / "pairs" / m / f"{pid}.png"
                 if p.exists():
+                    extra = f" · LPIPS {row.loc[m, 'lpips']:.3f}" if "lpips" in row.columns else ""
                     c.image(read_image(p), channels="BGR", width="stretch",
-                            caption=f"{ev.METHOD_LABELS[m]}\n{row.loc[m, 'psnr']:.2f} dB · {row.loc[m, 'ssim']:.3f}")
+                            caption=f"{ev.METHOD_LABELS[m]}\n{row.loc[m, 'psnr']:.2f} dB · SSIM {row.loc[m, 'ssim']:.3f}{extra}")
 
     with st.expander("▶️ Chạy lại đánh giá"):
         man = load_manifest()

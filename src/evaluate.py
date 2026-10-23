@@ -65,6 +65,27 @@ def ssim(ref, out, border=4):
                                        sigma=1.5, use_sample_covariance=False))
 
 
+_lpips_net = None
+
+
+def lpips_dist(ref, out):
+    """LPIPS (Zhang et al. 2018): khoảng cách cảm nhận dựa trên đặc trưng AlexNet.
+    Càng THẤP càng giống ảnh gốc theo cảm nhận của người xem. Cần: pip install lpips"""
+    global _lpips_net
+    import lpips
+    import torch
+
+    if _lpips_net is None:
+        _lpips_net = lpips.LPIPS(net="alex", verbose=False)
+
+    def to_t(img):
+        rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(np.float32) / 127.5 - 1
+        return torch.from_numpy(rgb).permute(2, 0, 1)[None]
+
+    with torch.inference_mode():
+        return float(_lpips_net(to_t(ref), to_t(out)).item())
+
+
 def laplacian_var(img):
     """Độ nét không tham chiếu: phương sai Laplacian của ảnh xám."""
     return float(cv2.Laplacian(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), cv2.CV_64F).var())
@@ -130,7 +151,8 @@ def run_pairs(rows, methods, log=print):
             out = match_size(out, gt)
             cv2.imwrite(str(RESULTS / "pairs" / method / f"{r['id']}.png"), out)
             out_rows.append({"id": r["id"], "method": method, "psnr": round(psnr(gt, out), 3),
-                             "ssim": round(ssim(gt, out), 4), "seconds": round(sec, 2), "faces": faces})
+                             "ssim": round(ssim(gt, out), 4), "lpips": round(lpips_dist(gt, out), 4),
+                             "seconds": round(sec, 2), "faces": faces})
             log(f"[{method}] {i}/{len(rows)} {r['id']}: PSNR {out_rows[-1]['psnr']:.2f} dB, "
                 f"SSIM {out_rows[-1]['ssim']:.3f}, {sec:.1f}s")
         del restorer
@@ -146,11 +168,31 @@ def summarize(metric_rows):
         p = np.array([float(r["psnr"]) for r in rs])
         s = np.array([float(r["ssim"]) for r in rs])
         t = np.array([float(r["seconds"]) for r in rs])
-        out.append({"method": m, "label": METHOD_LABELS[m], "n": len(rs),
-                    "psnr_mean": round(float(p.mean()), 2), "psnr_std": round(float(p.std()), 2),
-                    "ssim_mean": round(float(s.mean()), 4), "ssim_std": round(float(s.std()), 4),
-                    "seconds_mean": round(float(t.mean()), 2)})
+        row = {"method": m, "label": METHOD_LABELS[m], "n": len(rs),
+               "psnr_mean": round(float(p.mean()), 2), "psnr_std": round(float(p.std()), 2),
+               "ssim_mean": round(float(s.mean()), 4), "ssim_std": round(float(s.std()), 4),
+               "seconds_mean": round(float(t.mean()), 2)}
+        if all(r.get("lpips") not in (None, "") for r in rs):
+            lp = np.array([float(r["lpips"]) for r in rs])
+            row.update(lpips_mean=round(float(lp.mean()), 4), lpips_std=round(float(lp.std()), 4))
+        out.append(row)
     return out
+
+
+def add_lpips():
+    """Tính LPIPS cho các ảnh đã có trong results/pairs/ rồi cập nhật metrics.csv, summary.csv."""
+    with open(RESULTS / "metrics.csv", encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    for i, r in enumerate(rows, 1):
+        gt = cv2.imread(str(TEST / "gt" / f"{r['id']}.png"))
+        out = cv2.imread(str(RESULTS / "pairs" / r["method"] / f"{r['id']}.png"))
+        r["lpips"] = round(lpips_dist(gt, out), 4)
+        if i % 20 == 0:
+            print(f"LPIPS {i}/{len(rows)}")
+    write_csv(RESULTS / "metrics.csv", rows)
+    write_csv(RESULTS / "summary.csv", summarize(rows))
+    for s in summarize(rows):
+        print(f"  {s['label']:<22} LPIPS {s['lpips_mean']:.4f} ± {s['lpips_std']:.4f}")
 
 
 def run_real(rows, log=print):
@@ -191,7 +233,12 @@ def main():
     ap.add_argument("--limit", type=int, default=0, help="chỉ chạy N cặp đầu (0 = tất cả)")
     ap.add_argument("--methods", nargs="+", default=METHODS, choices=METHODS)
     ap.add_argument("--skip-real", action="store_true", help="bỏ qua ảnh hỏng thật")
+    ap.add_argument("--add-lpips", action="store_true",
+                    help="chỉ tính thêm LPIPS cho kết quả đã có trong results/ (không chạy lại mô hình)")
     args = ap.parse_args()
+    if args.add_lpips:
+        add_lpips()
+        return
 
     rows = load_manifest()
     pairs = [r for r in rows if r["set"] == "pair"]

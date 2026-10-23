@@ -14,6 +14,7 @@ Weights tự tải về ở lần chạy đầu (khoảng 600 MB), không cần 
 
 import argparse
 import gc
+import os
 import sys
 from pathlib import Path
 
@@ -25,7 +26,10 @@ import torchvision.transforms.functional as F
 # mới đã bỏ). Gán tên cũ trỏ sang module mới để khỏi phải sửa thư viện.
 sys.modules.setdefault("torchvision.transforms.functional_tensor", F)
 
+import gfpgan  # noqa: E402
+import realesrgan  # noqa: E402
 from basicsr.archs.rrdbnet_arch import RRDBNet  # noqa: E402
+from basicsr.utils.download_util import load_file_from_url  # noqa: E402
 from gfpgan import GFPGANer  # noqa: E402
 from realesrgan import RealESRGANer  # noqa: E402
 
@@ -39,6 +43,26 @@ ESRGAN_URLS = {
     2: "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.1/RealESRGAN_x2plus.pth",
     4: "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth",
 }
+
+
+# Mặc định thư viện tải model vào thư mục cài đặt (site-packages), nơi bị khóa ghi trên
+# Streamlit Cloud. Tự tải vào thư mục cache của người dùng; đổi bằng biến RESTORE_WEIGHTS_DIR.
+WEIGHTS_DIR = Path(os.environ.get("RESTORE_WEIGHTS_DIR", Path.home() / ".cache" / "image_restoration"))
+# Chỗ thư viện tự lưu ở các lần chạy trước: dùng lại nếu có, khỏi tải lại
+_OLD_WEIGHTS_DIRS = [
+    Path(realesrgan.__file__).resolve().parents[1] / "weights",
+    Path(gfpgan.__file__).resolve().parent / "weights",
+]
+
+
+def model_file(url):
+    """Đường dẫn file model trên máy; tải về WEIGHTS_DIR nếu chưa có."""
+    name = url.rsplit("/", 1)[-1]
+    for d in [WEIGHTS_DIR, *_OLD_WEIGHTS_DIRS]:
+        if (d / name).is_file():
+            return str(d / name)
+    WEIGHTS_DIR.mkdir(parents=True, exist_ok=True)
+    return load_file_from_url(url, model_dir=str(WEIGHTS_DIR), progress=True)
 
 
 class RestoreError(Exception):
@@ -77,7 +101,7 @@ def build_restorer(face_model="v1.4", scale=2, tile=400):
     try:
         background = RealESRGANer(
             scale=scale,
-            model_path=ESRGAN_URLS[scale],
+            model_path=model_file(ESRGAN_URLS[scale]),
             model=net,
             tile=tile,
             tile_pad=10,
@@ -88,7 +112,7 @@ def build_restorer(face_model="v1.4", scale=2, tile=400):
             return background
 
         restorer = GFPGANer(
-            model_path=GFPGAN_URLS[face_model],
+            model_path=model_file(GFPGAN_URLS[face_model]),
             upscale=scale,
             arch="clean",
             channel_multiplier=2,
